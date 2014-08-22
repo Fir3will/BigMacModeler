@@ -91,7 +91,7 @@ public class AddBoxPanel extends JPanel implements ActionListener
 	{
 		instance = new AddBoxPanel();
 
-		thisFrame = new JFrame("Model");
+		thisFrame = new JFrame("Modeling");
 		thisFrame.add(instance);
 		thisFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		thisFrame.setSize(600, 400);

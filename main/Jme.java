@@ -30,7 +30,6 @@ public class Jme extends SimpleApplication
 	{
 		instance = new Jme();
 		instance.setSettings(new AppSettings(true));
-		instance.settings.setResolution(Options.getXResolution(), Options.getYResolution());
 		instance.settings.setTitle("Big Mac Modeler");
 		instance.setShowSettings(false);
 		instance.setDisplayFps(Vars.isDebug);

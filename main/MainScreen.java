@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-public class BigMac extends JPanel
+public class MainScreen extends JPanel
 {
 	private static JButton newSave, options, quit;
 	private static final long serialVersionUID = 1L;
@@ -20,7 +20,7 @@ public class BigMac extends JPanel
 	public static void start()
 	{
 		JFrame frame = new JFrame("Modeler");
-		frame.add(new BigMac(frame));
+		frame.add(new MainScreen(frame));
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
@@ -29,7 +29,7 @@ public class BigMac extends JPanel
 		frame.pack();
 	}
 
-	public BigMac(JFrame mainFrame)
+	public MainScreen(JFrame mainFrame)
 	{
 		super(new BorderLayout());
 		System.out.println("Initializing programs!");

@@ -4,10 +4,9 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -17,13 +16,11 @@ public class Options extends JPanel
 {
 	public static String fileName = "";
 	public static final JFrame thisFrame;
-	public static JTextField xDimension;
-	public static JTextField yDimension;
 	public static File file;
 
 	static
 	{
-		thisFrame = new JFrame("Boxes");
+		thisFrame = new JFrame("Options");
 		thisFrame.add(new Options());
 		thisFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		thisFrame.setSize(600, 400);
@@ -37,16 +34,27 @@ public class Options extends JPanel
 	{
 		super(new BorderLayout());
 
-		xDimension = new JTextField("640");
-		xDimension.setBorder(BorderFactory.createTitledBorder("X Size"));
-		yDimension = new JTextField("480");
-		yDimension.setBorder(BorderFactory.createTitledBorder("Y Size"));
-
 		JPanel topPanel = new JPanel(new BorderLayout());
-		topPanel.add(xDimension, BorderLayout.NORTH);
-		topPanel.add(yDimension, BorderLayout.SOUTH);
 		JPanel midPanel = new JPanel(new BorderLayout());
 		JPanel bottomPanel = new JPanel(new BorderLayout());
+
+		new JLabel("The Model is going to, almost always, seem MUCH smaller in game!");
+		new JLabel("Adding a new box will always be in the middle and a 1x1x1 Cube!");
+		new JLabel("The Rotation isn't by Degrees, But actually by Radian! So 2 PI is a full rotation!");
+		new JLabel("FINALLY! A MODELER FOR MAC AND LINUX!");
+		new JLabel("Look at that Spider GO!");
+		new JLabel("Cloning a box doesn't clone the exact name!");
+		new JLabel("The '+' in the middle of the screen is how you select Boxes!");
+		new JLabel("I'm always open to suggestions! Leave a comment on my MCF Topic!");
+		new JLabel("Got a Crash? Get the file in the Logs folder and send that to me with a quick Before and After!");
+		new JLabel("A 1x1x1 Box is just One Texture Pixel in Game!");
+		new JLabel("Use the Plank below the surface for a Guide on how it'll look!");
+		new JLabel("Let me know any questions you have reguarding function and features!");
+		new JLabel("Sorry about no Texture Map, I will try my best to get that in future updates!");
+		new JLabel("YOU'VE BEEN WAITING FOREVER! I KNOW! I CAN'T BELIEVE IT EITHER!");
+		new JLabel("Gotta LOVE the Name!");
+
+		midPanel.add(new JLabel("No Options available yet! Sorry! Nothing to customize really..."));
 
 		add(topPanel, BorderLayout.NORTH);
 		add(midPanel, BorderLayout.CENTER);
@@ -78,14 +86,13 @@ public class Options extends JPanel
 		FileHelper.writeToFile(path, " * ~Multi-Platform~ Mac, PC, and (maybe) Linux!");
 		FileHelper.writeToFile(path, " * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		FileHelper.writeToFile(path, " */");
-		FileHelper.writeToFile(path, "");
 		FileHelper.writeToFile(path, "package models;");
 		FileHelper.writeToFile(path, "");
-		FileHelper.writeToFile(path, "import cpw.mods.fml.relauncher.Side;");
-		FileHelper.writeToFile(path, "import cpw.mods.fml.relauncher.SideOnly;");
-		FileHelper.writeToFile(path, "import net.minecraft.entity.Entity;");
 		FileHelper.writeToFile(path, "import net.minecraft.client.model.ModelBase;");
 		FileHelper.writeToFile(path, "import net.minecraft.client.model.ModelRenderer;");
+		FileHelper.writeToFile(path, "import net.minecraft.entity.Entity;");
+		FileHelper.writeToFile(path, "import cpw.mods.fml.relauncher.Side;");
+		FileHelper.writeToFile(path, "import cpw.mods.fml.relauncher.SideOnly;");
 		FileHelper.writeToFile(path, "");
 		FileHelper.writeToFile(path, "@SideOnly(Side.CLIENT)");
 		FileHelper.writeToFile(path, "public class " + file.getName().replaceAll(".java", "") + " extends ModelBase");
@@ -112,11 +119,11 @@ public class Options extends JPanel
 
 			FileHelper.writeToFile(path, "");
 			FileHelper.writeToFile(path, "\t\t" + geom.getName() + " = new ModelRenderer(this, " + part.getXOffset() + ", " + part.getYOffset() + ");");
-			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".addBox(" + loc.x + "F, " + loc.y + "F, " + loc.z + "F, " + (int) scale.x + ", " + (int) scale.y + ", " + (int) scale.z + ");");
+			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".addBox(" + (loc.x - scale.x / 2) + "F, " + (20 - loc.y) + "F, " + (loc.z - scale.z / 2) + "F, " + (int) scale.x + ", " + (int) scale.y + ", " + (int) scale.z + ");");
 			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".setTextureSize(512, 256);");
-			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".setRotationPoint(" + geom.getLocalRotation().getX() + "F, " + geom.getLocalRotation().getY() + "F, " + geom.getLocalRotation().getZ() + "F);");
+			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".setRotationPoint(0.0F, 0.0F, 0.0F);");
 			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".mirror = " + part.isMirror() + ";");
-			FileHelper.writeToFile(path, "\t\tsetRotation(" + geom.getName() + ", 0.0F, 0.0F, 0.0F);");
+			FileHelper.writeToFile(path, "\t\tsetRotation(" + geom.getName() + ", " + geom.getLocalRotation().getX() + "F, " + geom.getLocalRotation().getY() + "F, " + geom.getLocalRotation().getZ() + "F);");
 		}
 
 		FileHelper.writeToFile(path, "\t}");
@@ -151,16 +158,6 @@ public class Options extends JPanel
 	public static void open()
 	{
 		thisFrame.setVisible(true);
-	}
-
-	public static int getXResolution()
-	{
-		return Integer.parseInt(xDimension.getText());
-	}
-
-	public static int getYResolution()
-	{
-		return Integer.parseInt(yDimension.getText());
 	}
 
 	private static final long serialVersionUID = 1L;
