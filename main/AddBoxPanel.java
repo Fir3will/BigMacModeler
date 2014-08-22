@@ -33,7 +33,8 @@ public class AddBoxPanel extends JPanel implements ActionListener
 	public int xOffset, yOffset;
 	private final Timer timer;
 	private static final long serialVersionUID = 1L;
-	private final JButton removeBoxButton;
+	private final JButton removeBoxButton, cloneBoxButton;
+	public static AddBoxPanel instance;
 
 	static
 	{
@@ -88,8 +89,10 @@ public class AddBoxPanel extends JPanel implements ActionListener
 
 	public static void initialize()
 	{
+		instance = new AddBoxPanel();
+
 		thisFrame = new JFrame("Model");
-		thisFrame.add(new AddBoxPanel());
+		thisFrame.add(instance);
 		thisFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		thisFrame.setSize(600, 400);
 		thisFrame.setLocationRelativeTo(null);
@@ -122,7 +125,17 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JME3Start.instance.addBox(mirror, xOffset, yOffset);
+				Jme.instance.addBox(mirror, xOffset, yOffset);
+			}
+		});
+
+		cloneBoxButton = new JButton("Clone Box");
+		cloneBoxButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Jme.instance.cloneSelectedBox(mirror, xOffset, yOffset);
 			}
 		});
 
@@ -132,7 +145,7 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JME3Start.instance.removeSelectedBox();
+				Jme.instance.removeSelectedBox();
 			}
 		});
 
@@ -142,12 +155,13 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				mirror = AddBoxPanel.this.mirrorButton.isSelected();
+				Part.getPartFor(Jme.instance.selectedGeometry).setMirror(AddBoxPanel.this.mirrorButton.isSelected());
 			}
 		});
 
 		buttonPanel.add(addBoxButton, BorderLayout.NORTH);
-		buttonPanel.add(removeBoxButton, BorderLayout.SOUTH);
+		buttonPanel.add(removeBoxButton, BorderLayout.CENTER);
+		buttonPanel.add(cloneBoxButton, BorderLayout.SOUTH);
 
 		JPanel topVarsPanel = new JPanel(new BorderLayout());
 		topVarsPanel.add(boxX, BorderLayout.NORTH);
@@ -180,14 +194,14 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JME3Start.instance.generateCode();
+				Jme.instance.generateCode();
 			}
 		});
 
 		JPanel mid = new JPanel(new BorderLayout());
 		mid.add(buttonPanel, BorderLayout.NORTH);
-		mid.add(boxName, BorderLayout.SOUTH);
-		mid.add(boxPanel, BorderLayout.CENTER);
+		mid.add(boxName, BorderLayout.CENTER);
+		mid.add(boxPanel, BorderLayout.SOUTH);
 
 		add(mid, BorderLayout.NORTH);
 		add(generateCode, BorderLayout.SOUTH);
@@ -196,12 +210,13 @@ public class AddBoxPanel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		if (JME3Start.instance == null) return;
+		if (Jme.instance == null) return;
 
-		Geometry geom = JME3Start.instance.selectedGeometry;
+		Geometry geom = Jme.instance.selectedGeometry;
 		boolean flag = geom != null;
 
 		removeBoxButton.setEnabled(flag);
+		cloneBoxButton.setEnabled(flag);
 		boxX.setEnabled(flag);
 		boxY.setEnabled(flag);
 		boxZ.setEnabled(flag);

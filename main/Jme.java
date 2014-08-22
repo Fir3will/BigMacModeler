@@ -20,24 +20,24 @@ import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 
-public class JME3Start extends SimpleApplication
+public class Jme extends SimpleApplication
 {
 	public Geometry selectedGeometry;
 	public Node shootables;
-	public static JME3Start instance;
+	public static Jme instance;
 
 	public static void init()
 	{
-		instance = new JME3Start();
+		instance = new Jme();
 		instance.setSettings(new AppSettings(true));
 		instance.settings.setResolution(Options.getXResolution(), Options.getYResolution());
-		instance.settings.setTitle("Modeler");
+		instance.settings.setTitle("Big Mac Modeler");
 		instance.setShowSettings(false);
-		instance.setDisplayFps(false);
-		instance.setDisplayStatView(false);
+		instance.setDisplayFps(Vars.isDebug);
+		instance.setDisplayStatView(Vars.isDebug);
 	}
 
-	public static void startJME3()
+	public static void startJme()
 	{
 		instance.start();
 	}
@@ -55,6 +55,13 @@ public class JME3Start extends SimpleApplication
 		setGridTexFor(floorG);
 		floorG.setLocalTranslation(0.0F, -4.0F, 0.0F);
 		rootNode.attachChild(floorG);
+
+		Box plank = new Box(16.0F, 16.0F, 16.0F);
+		Geometry plankG = new Geometry("Plank", plank);
+		setPlankTexFor(plankG);
+		plankG.setLocalTranslation(0.0F, -20.0F, 0.0F);
+		rootNode.attachChild(plankG);
+
 		rootNode.attachChild(shootables);
 
 		inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -87,7 +94,7 @@ public class JME3Start extends SimpleApplication
 				}
 				if (results.size() < 1)
 				{
-					JME3Start.this.selectedGeometry = null;
+					Jme.this.selectedGeometry = null;
 				}
 			}
 		}
@@ -124,6 +131,16 @@ public class JME3Start extends SimpleApplication
 		geom.setMaterial(mat);
 	}
 
+	public void setPlankTexFor(Geometry geom)
+	{
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Texture texture = this.assetManager.loadTexture("/images/planks.png");
+		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		mat.setTexture("ColorMap", texture);
+		geom.setQueueBucket(Bucket.Transparent);
+		geom.setMaterial(mat);
+	}
+
 	@Override
 	public void simpleUpdate(float tpf)
 	{
@@ -145,6 +162,17 @@ public class JME3Start extends SimpleApplication
 		}
 	}
 
+	public void cloneSelectedBox(boolean mirror, int xOffset, int yOffset)
+	{
+		Geometry geometry = (Geometry) this.selectedGeometry.deepClone();
+		geometry.setName(geometry.getName() + boxID++);
+		unSelect(geometry);
+		rootNode.attachChild(geometry);
+		shootables.attachChild(geometry);
+
+		new Part(geometry, mirror, xOffset, yOffset);
+	}
+
 	public void addBox(boolean mirror, int xOffset, int yOffset)
 	{
 		Box box = new Box(1.0F, 1.0F, 1.0F);
@@ -160,7 +188,8 @@ public class JME3Start extends SimpleApplication
 	{
 		if (selectedGeometry != null)
 		{
-			selectedGeometry.removeFromParent();
+			shootables.detachChild(selectedGeometry);
+			rootNode.detachChild(selectedGeometry);
 		}
 	}
 

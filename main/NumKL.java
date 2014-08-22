@@ -87,6 +87,6 @@ public class NumKL implements KeyListener
 				}
 			}
 		}
-		JME3Start.instance.setSelectedBoxVars(AddBoxPanel.boxName.getText(), Float.parseFloat(AddBoxPanel.boxX.getText()), Float.parseFloat(AddBoxPanel.boxY.getText()), Float.parseFloat(AddBoxPanel.boxZ.getText()), Float.parseFloat(AddBoxPanel.sizeX.getText()), Float.parseFloat(AddBoxPanel.sizeY.getText()), Float.parseFloat(AddBoxPanel.sizeZ.getText()), AddBoxPanel.mirror, Integer.parseInt(AddBoxPanel.texOffsetX.getText()), Integer.parseInt(AddBoxPanel.texOffsetY.getText()), Float.parseFloat(AddBoxPanel.rotX.getText()), Float.parseFloat(AddBoxPanel.rotY.getText()), Float.parseFloat(AddBoxPanel.rotZ.getText()));
+		Jme.instance.setSelectedBoxVars(AddBoxPanel.boxName.getText(), Float.parseFloat(AddBoxPanel.boxX.getText()), Float.parseFloat(AddBoxPanel.boxY.getText()), Float.parseFloat(AddBoxPanel.boxZ.getText()), Float.parseFloat(AddBoxPanel.sizeX.getText()), Float.parseFloat(AddBoxPanel.sizeY.getText()), Float.parseFloat(AddBoxPanel.sizeZ.getText()), AddBoxPanel.mirror, Integer.parseInt(AddBoxPanel.texOffsetX.getText()), Integer.parseInt(AddBoxPanel.texOffsetY.getText()), Float.parseFloat(AddBoxPanel.rotX.getText()), Float.parseFloat(AddBoxPanel.rotY.getText()), Float.parseFloat(AddBoxPanel.rotZ.getText()));
 	}
 }

@@ -1,6 +1,9 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,6 +19,7 @@ public class Options extends JPanel
 	public static final JFrame thisFrame;
 	public static JTextField xDimension;
 	public static JTextField yDimension;
+	public static File file;
 
 	static
 	{
@@ -51,9 +55,17 @@ public class Options extends JPanel
 
 	public static void generateCode(Node shootables)
 	{
-		String path = System.getProperty("user.dir") + "/Model" + fileName + ".java";
+		String path = file.getPath();
 		System.err.println("Generating Code at: " + path);
-		FileHelper.resetFile(path);
+
+		if (!Files.exists(Paths.get(path)))
+		{
+			FileHelper.createFile(path);
+		}
+		else
+		{
+			FileHelper.resetFile(path);
+		}
 
 		FileHelper.writeToFile(path, "/*");
 		FileHelper.writeToFile(path, " * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -76,24 +88,24 @@ public class Options extends JPanel
 		FileHelper.writeToFile(path, "import net.minecraft.client.model.ModelRenderer;");
 		FileHelper.writeToFile(path, "");
 		FileHelper.writeToFile(path, "@SideOnly(Side.CLIENT)");
-		FileHelper.writeToFile(path, "public class Model" + fileName + " extends ModelBase");
+		FileHelper.writeToFile(path, "public class " + file.getName().replaceAll(".java", "") + " extends ModelBase");
 		FileHelper.writeToFile(path, "{");
 
 		for (int i = 0; i < shootables.getQuantity(); i++)
 		{
-			Spatial geom = shootables.getChild(0);
-			FileHelper.writeToFile(path, "\tModelRenderer " + geom.getName() + ";");
+			Spatial geom = shootables.getChild(i);
+			FileHelper.writeToFile(path, "\tprivate ModelRenderer " + geom.getName() + ";");
 		}
 
 		FileHelper.writeToFile(path, "");
-		FileHelper.writeToFile(path, "\tpublic Model" + fileName + "()");
+		FileHelper.writeToFile(path, "\tpublic " + file.getName().replaceAll(".java", "") + "()");
 		FileHelper.writeToFile(path, "\t{");
 		FileHelper.writeToFile(path, "\t\ttextureWidth = 512;");
 		FileHelper.writeToFile(path, "\t\ttextureHeight = 256;");
 
 		for (int i = 0; i < shootables.getQuantity(); i++)
 		{
-			Spatial geom = shootables.getChild(0);
+			Spatial geom = shootables.getChild(i);
 			Vector3f loc = geom.getLocalTranslation();
 			Vector3f scale = geom.getLocalScale();
 			Part part = Part.getPartFor(geom);
@@ -115,7 +127,7 @@ public class Options extends JPanel
 
 		for (int i = 0; i < shootables.getQuantity(); i++)
 		{
-			Spatial geom = shootables.getChild(0);
+			Spatial geom = shootables.getChild(i);
 			FileHelper.writeToFile(path, "\t\t" + geom.getName() + ".render(f5);");
 		}
 

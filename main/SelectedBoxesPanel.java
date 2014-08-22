@@ -76,9 +76,8 @@ public class SelectedBoxesPanel extends JPanel implements ActionListener
 				{
 					Part selectedPart = Part.getAllParts().get(i);
 
-					JME3Start.instance.selectedGeometry = null;
-					JME3Start.instance.select((Geometry) selectedPart.getSpatial());
-					// get the Parts Here
+					Jme.instance.selectedGeometry = null;
+					Jme.instance.select((Geometry) selectedPart.getSpatial());
 				}
 			}
 		}
