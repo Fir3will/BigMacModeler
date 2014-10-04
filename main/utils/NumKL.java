@@ -1,8 +1,10 @@
-package main;
+package main.utils;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JTextField;
+import main.AddBoxPanel;
+import main.Jme;
 
 public class NumKL implements KeyListener
 {

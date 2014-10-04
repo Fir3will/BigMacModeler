@@ -1,4 +1,4 @@
-package main;
+package main.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,6 +63,11 @@ public class Part implements Serializable, Cloneable
 	public void setSpatial(Spatial spatial)
 	{
 		this.spatial = spatial;
+	}
+
+	public void remove()
+	{
+		parts.remove(this);
 	}
 
 	@Override

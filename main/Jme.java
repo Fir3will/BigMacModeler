@@ -1,5 +1,10 @@
 package main;
 
+import java.io.File;
+import java.util.ArrayList;
+import main.utils.DataTag;
+import main.utils.Part;
+import main.utils.Vars;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapText;
@@ -25,6 +30,9 @@ public class Jme extends SimpleApplication
 	public Geometry selectedGeometry;
 	public Node shootables;
 	public static Jme instance;
+	public float lastTime;
+	public File saveFile;
+	public boolean canSave;
 
 	public static void init()
 	{
@@ -47,9 +55,7 @@ public class Jme extends SimpleApplication
 		viewPort.setBackgroundColor(ColorRGBA.White);
 		initCrossHairs();
 
-		shootables = new Node("Shootables");
-
-		Box floor = new Box(50.0F, 0.05F, 50.0F);
+		Box floor = new Box(100.0F, 0.05F, 100.0F);
 		Geometry floorG = new Geometry("Floor", floor);
 		setGridTexFor(floorG);
 		floorG.setLocalTranslation(0.0F, -4.0F, 0.0F);
@@ -61,7 +67,15 @@ public class Jme extends SimpleApplication
 		plankG.setLocalTranslation(0.0F, -20.0F, 0.0F);
 		rootNode.attachChild(plankG);
 
+		shootables = new Node("Shootables");
 		rootNode.attachChild(shootables);
+		for (Object[] obj : temp)
+		{
+			unSelect((Spatial) obj[0]);
+			shootables.attachChild((Spatial) obj[0]);
+
+			new Part((Spatial) obj[0], (boolean) obj[1], (int) obj[2], (int) obj[3]);
+		}
 
 		inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		inputManager.addListener(al, "Shoot");
@@ -71,6 +85,9 @@ public class Jme extends SimpleApplication
 		flyCam.setDragToRotate(true);
 		flyCam.setMoveSpeed(20.0F);
 		inputManager.setCursorVisible(true);
+
+		if (temp.size() == 0) addBox(false, 0, 0);
+		canSave = true;
 	}
 
 	private final ActionListener al = new ActionListener()
@@ -93,7 +110,7 @@ public class Jme extends SimpleApplication
 				}
 				if (results.size() < 1)
 				{
-					Jme.this.selectedGeometry = null;
+					unSelect(Jme.this.selectedGeometry);
 				}
 			}
 		}
@@ -101,22 +118,29 @@ public class Jme extends SimpleApplication
 
 	public void unSelect(Spatial geom)
 	{
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture texture = this.assetManager.loadTexture("/images/frame.png");
-		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		mat.setTexture("ColorMap", texture);
-		geom.setQueueBucket(Bucket.Transparent);
-		geom.setMaterial(mat);
+		if (geom != null)
+		{
+			Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+			Texture texture = this.assetManager.loadTexture("/images/frame.png");
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			mat.setTexture("ColorMap", texture);
+			geom.setQueueBucket(Bucket.Transparent);
+			geom.setMaterial(mat);
+		}
+		this.selectedGeometry = null;
 	}
 
 	public void select(Geometry geom)
 	{
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture texture = this.assetManager.loadTexture("/images/frame_selected.png");
-		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		mat.setTexture("ColorMap", texture);
-		geom.setQueueBucket(Bucket.Transparent);
-		geom.setMaterial(mat);
+		if (geom != null)
+		{
+			Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+			Texture texture = this.assetManager.loadTexture("/images/frame_selected.png");
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			mat.setTexture("ColorMap", texture);
+			geom.setQueueBucket(Bucket.Transparent);
+			geom.setMaterial(mat);
+		}
 		this.selectedGeometry = geom;
 	}
 
@@ -145,28 +169,37 @@ public class Jme extends SimpleApplication
 	{
 		Vector3f loc = this.cam.getLocation();
 
-		if (loc.x > 50 || loc.x < -50)
+		if (loc.x > 100 || loc.x < -100)
 		{
-			cam.setLocation(loc.setX(loc.x < -50 ? -50 : 50));
+			cam.setLocation(loc.setX(loc.x < -100 ? -100 : 100));
 		}
 
-		if (loc.y > 50 || loc.y < -50)
+		if (loc.y > 100 || loc.y < -100)
 		{
-			cam.setLocation(loc.setY(loc.y < -50 ? -50 : 50));
+			cam.setLocation(loc.setY(loc.y < -100 ? -100 : 100));
 		}
 
-		if (loc.z > 50 || loc.z < -50)
+		if (loc.z > 100 || loc.z < -100)
 		{
-			cam.setLocation(loc.setZ(loc.z < -50 ? -50 : 50));
+			cam.setLocation(loc.setZ(loc.z < -100 ? -100 : 100));
 		}
+
+		if ((timer.getTimeInSeconds() - lastTime) / 60 > Options.saveMins)
+		{
+			lastTime = timer.getTimeInSeconds();
+			save();
+			Options.saveOptions();
+		}
+
+		System.gc();
 	}
 
 	public void cloneSelectedBox(boolean mirror, int xOffset, int yOffset)
 	{
 		Geometry geometry = (Geometry) this.selectedGeometry.deepClone();
 		geometry.setName(geometry.getName() + boxID++);
-		unSelect(geometry);
-		rootNode.attachChild(geometry);
+		unSelect(this.selectedGeometry);
+		select(geometry);
 		shootables.attachChild(geometry);
 
 		new Part(geometry, mirror, xOffset, yOffset);
@@ -176,8 +209,7 @@ public class Jme extends SimpleApplication
 	{
 		Box box = new Box(1.0F, 1.0F, 1.0F);
 		Geometry geometry = new Geometry("box" + boxID++, box);
-		unSelect(geometry);
-		rootNode.attachChild(geometry);
+		select(geometry);
 		shootables.attachChild(geometry);
 
 		new Part(geometry, mirror, xOffset, yOffset);
@@ -188,7 +220,7 @@ public class Jme extends SimpleApplication
 		if (selectedGeometry != null)
 		{
 			shootables.detachChild(selectedGeometry);
-			rootNode.detachChild(selectedGeometry);
+			Part.getPartFor(selectedGeometry).remove();
 		}
 	}
 
@@ -198,7 +230,7 @@ public class Jme extends SimpleApplication
 		{
 			selectedGeometry.setLocalTranslation(posX, posY, posZ);
 			selectedGeometry.setLocalScale(sizeX, sizeY, sizeZ);
-			selectedGeometry.setLocalRotation(new Quaternion(rotX, rotY, rotZ, 1));
+			selectedGeometry.setLocalRotation(new Quaternion(Options.setRotation(rotX), Options.setRotation(rotY), Options.setRotation(rotZ), 1));
 			selectedGeometry.setName(name);
 			Part.getPartFor(selectedGeometry).setMirror(mirror);
 			Part.getPartFor(selectedGeometry).setXOffset(xOffset);
@@ -223,4 +255,53 @@ public class Jme extends SimpleApplication
 	}
 
 	private static int boxID = 1;
+
+	public void load()
+	{
+		DataTag tag = new DataTag(saveFile);
+		int size = tag.getInteger("Size");
+
+		if (size < 1) return;
+
+		for (int i = 0; i < size; i++)
+		{
+			DataTag tag1 = tag.getTag("Tag-" + i);
+
+			Box box = new Box(tag1.getFloat("Geom Width"), tag1.getFloat("Geom Height"), tag1.getFloat("Geom Length"));
+			Geometry geometry = new Geometry(tag1.getString("Geom Name"), box);
+			geometry.setLocalRotation((Quaternion) tag1.getSerializable("Geom Rotation"));
+			geometry.setLocalScale((Vector3f) tag1.getSerializable("Geom Scale"));
+			geometry.setLocalTranslation((Vector3f) tag1.getSerializable("Geom Position"));
+			temp.add(new Object[] {
+			geometry, tag1.getBoolean("Mirror"), tag1.getInteger("X Offset"), tag1.getInteger("Y Offset")
+			});
+		}
+	}
+
+	public void save()
+	{
+		DataTag tag = new DataTag(saveFile);
+		tag.setInteger("Size", shootables.getQuantity());
+
+		for (int i = 0; i < shootables.getQuantity(); i++)
+		{
+			Spatial spat = shootables.getChild(i);
+			DataTag tag1 = new DataTag(tag);
+
+			tag1.setBoolean("Mirror", Part.getPartFor(spat).isMirror());
+			tag1.setInteger("X Offset", Part.getPartFor(spat).getXOffset());
+			tag1.setInteger("Y Offset", Part.getPartFor(spat).getYOffset());
+			tag1.setString("Geom Name", spat.getName());
+			tag1.setFloat("Geom Width", ((Box) ((Geometry) spat).getMesh()).xExtent);
+			tag1.setFloat("Geom Height", ((Box) ((Geometry) spat).getMesh()).yExtent);
+			tag1.setFloat("Geom Length", ((Box) ((Geometry) spat).getMesh()).zExtent);
+			tag1.setSerializable("Geom Rotation", spat.getLocalRotation());
+			tag1.setSerializable("Geom Scale", spat.getLocalScale());
+			tag1.setSerializable("Geom Position", spat.getLocalTranslation());
+
+			tag.setTag("Tag-" + i, tag1);
+		}
+	}
+
+	private static ArrayList<Object[]> temp = new ArrayList<Object[]>();
 }

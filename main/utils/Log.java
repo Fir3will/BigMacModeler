@@ -1,14 +1,15 @@
-package main;
+package main.utils;
 
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Logger extends PrintStream
+public class Log extends PrintStream
 {
 	private class SimpleTimer
 	{
@@ -33,21 +34,12 @@ public class Logger extends PrintStream
 	private final DateFormat dateFormat = new SimpleDateFormat();
 	private Date cachedDate = new Date();
 	private final boolean isErr;
-	public static final String path = System.getProperty("user.dir") + "/Logs/latest log.txt";
 
 	private final SimpleTimer refreshTimer = new SimpleTimer();
 
-	public Logger(PrintStream out, boolean isErr)
+	public Log(PrintStream out, boolean isErr)
 	{
 		super(out);
-		if (!Files.exists(Paths.get(path)))
-		{
-			FileHelper.createFile(path);
-		}
-		else
-		{
-			FileHelper.resetFile(path);
-		}
 		this.isErr = isErr;
 	}
 
@@ -87,9 +79,29 @@ public class Logger extends PrintStream
 			write = "[" + getPrefix() + "]: " + str;
 			super.print("[" + getPrefix() + "]: " + str);
 		}
-
-		FileHelper.writeToFile(path, write);
+		lines.add(write);
 	}
 
 	public static final String REMOVE_PREFIX = "::";
+
+	public static void printLog()
+	{
+		String path = System.getProperty("user.dir") + "/Logs/latest log.txt";
+
+		if (!Files.exists(Paths.get(path)))
+		{
+			FileHelper.createFile(path);
+		}
+		else
+		{
+			FileHelper.resetFile(path);
+		}
+
+		for (String line : lines)
+		{
+			FileHelper.writeToFile(path, line);
+		}
+	}
+
+	private static final ArrayList<String> lines = new ArrayList<String>();
 }

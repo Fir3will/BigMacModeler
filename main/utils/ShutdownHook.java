@@ -1,4 +1,7 @@
-package main;
+package main.utils;
+
+import main.Jme;
+import main.Options;
 
 public class ShutdownHook extends Thread
 {
@@ -9,7 +12,13 @@ public class ShutdownHook extends Thread
 			@Override
 			public void run()
 			{
+				Options.saveOptions();
+				if (Jme.instance.canSave)
+				{
+					Jme.instance.save();
+				}
 				System.out.println("Shutting Down!");
+				Log.printLog();
 			}
 		});
 

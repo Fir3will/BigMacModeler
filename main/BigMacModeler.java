@@ -12,6 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import main.utils.FileHelper;
+import main.utils.Log;
+import main.utils.ShutdownHook;
+import main.utils.Vars;
 
 public class BigMacModeler extends JPanel implements ActionListener
 {
@@ -42,8 +46,9 @@ public class BigMacModeler extends JPanel implements ActionListener
 
 		FileHelper.createFile(System.getProperty("user.dir") + "/Logs", true);
 		FileHelper.createFile(System.getProperty("user.dir") + "/Models", true);
-		System.setErr(new Logger(System.err, true));
-		System.setOut(new Logger(System.out, false));
+		FileHelper.createFile(System.getProperty("user.dir") + "/Saves", true);
+		System.setErr(new Log(System.err, true));
+		System.setOut(new Log(System.out, false));
 		System.err.println("Initializing: Completed");
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 
@@ -80,7 +85,7 @@ public class BigMacModeler extends JPanel implements ActionListener
 		info.setHorizontalAlignment(SwingConstants.CENTER);
 		info.setPreferredSize(new Dimension(info.getFontMetrics(info.getFont()).stringWidth(tip) + 100, 100));
 
-		JLabel version = new JLabel("Big Mac Modeler Version: 1.0");
+		JLabel version = new JLabel("Big Mac Modeler Version: 0.4b");
 		version.setVerticalAlignment(SwingConstants.CENTER);
 		version.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -100,7 +105,7 @@ public class BigMacModeler extends JPanel implements ActionListener
 	{
 		label.setText("Loading: " + counter / (MAX / 100) + "%");
 
-		if (counter++ > MAX && !done)
+		if (true && !done)// counter++ > MAX && !done)
 		{
 			System.out.println("Finished Loading, Starting up Program!");
 			MainScreen.start();

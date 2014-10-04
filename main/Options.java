@@ -1,14 +1,24 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import main.utils.DataTag;
+import main.utils.FileHelper;
+import main.utils.Part;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
@@ -17,9 +27,18 @@ public class Options extends JPanel
 	public static String fileName = "";
 	public static final JFrame thisFrame;
 	public static File file;
+	public static boolean inDegrees = true;
+	public static float saveMins = 5;
+	public static final DataTag save;
+	public static boolean saveOnExit;
 
 	static
 	{
+		boolean ex = new File(System.getProperty("user.dir") + "/options.dat").exists();
+		save = new DataTag(new File(System.getProperty("user.dir") + "/options.dat"));
+		inDegrees = ex ? save.getBoolean("In Degrees") : true;
+		saveMins = ex ? save.getFloat("Save Interval") : 5.0F;
+
 		thisFrame = new JFrame("Options");
 		thisFrame.add(new Options());
 		thisFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -34,31 +53,116 @@ public class Options extends JPanel
 	{
 		super(new BorderLayout());
 
+		final JTextField saveInterval = new JTextField(String.valueOf((int) saveMins));
+		saveInterval.setBorder(BorderFactory.createTitledBorder("Mins before Autosaving"));
+		saveInterval.setToolTipText("How many minutes before autosaving?");
+		saveInterval.addKeyListener(new KeyListener()
+		{
+			@Override
+			public void keyTyped(KeyEvent e)
+			{
+				keyPressed(e);
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e)
+			{
+				String text = saveInterval.getText();
+
+				for (int i = 0; i < text.length(); i++)
+				{
+					if (text.isEmpty()) text = "0";
+
+					if (!Character.isDigit(text.charAt(i)))
+					{
+						text = text.replace(text.charAt(i) + "", "");
+						saveInterval.setText(text);
+					}
+				}
+				if (saveInterval.getText().isEmpty())
+				{
+					saveInterval.setText("5");
+				}
+
+				try
+				{
+					saveMins = Integer.parseInt(saveInterval.getText());
+				}
+				catch (NumberFormatException ex)
+				{
+
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+				keyPressed(e);
+			}
+		});
+
+		final JCheckBox inDeg = new JCheckBox("In Deg", inDegrees);
+		inDeg.setToolTipText("Is the Rotation in Degrees?");
+		inDeg.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				inDegrees = inDeg.isSelected();
+			}
+		});
+
+		final JCheckBox saveOnExt = new JCheckBox("In Deg", inDegrees);
+		saveOnExt.setToolTipText("Is the Rotation in Degrees?");
+		saveOnExt.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				saveOnExit = saveOnExt.isSelected();
+			}
+		});
+
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel midPanel = new JPanel(new BorderLayout());
 		JPanel bottomPanel = new JPanel(new BorderLayout());
-
-		new JLabel("The Model is going to, almost always, seem MUCH smaller in game!");
-		new JLabel("Adding a new box will always be in the middle and a 1x1x1 Cube!");
-		new JLabel("The Rotation isn't by Degrees, But actually by Radian! So 2 PI is a full rotation!");
-		new JLabel("FINALLY! A MODELER FOR MAC AND LINUX!");
-		new JLabel("Look at that Spider GO!");
-		new JLabel("Cloning a box doesn't clone the exact name!");
-		new JLabel("The '+' in the middle of the screen is how you select Boxes!");
-		new JLabel("I'm always open to suggestions! Leave a comment on my MCF Topic!");
-		new JLabel("Got a Crash? Get the file in the Logs folder and send that to me with a quick Before and After!");
-		new JLabel("A 1x1x1 Box is just One Texture Pixel in Game!");
-		new JLabel("Use the Plank below the surface for a Guide on how it'll look!");
-		new JLabel("Let me know any questions you have reguarding function and features!");
-		new JLabel("Sorry about no Texture Map, I will try my best to get that in future updates!");
-		new JLabel("YOU'VE BEEN WAITING FOREVER! I KNOW! I CAN'T BELIEVE IT EITHER!");
-		new JLabel("Gotta LOVE the Name!");
-
-		midPanel.add(new JLabel("No Options available yet! Sorry! Nothing to customize really..."));
+		topPanel.add(inDeg, BorderLayout.NORTH);
+		topPanel.add(saveInterval, BorderLayout.CENTER);
 
 		add(topPanel, BorderLayout.NORTH);
 		add(midPanel, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
+	}
+
+	public static void open()
+	{
+		thisFrame.setVisible(true);
+	}
+
+	public static float setRotation(float rot)
+	{
+		return (float) (inDegrees ? Math.toRadians(rot) : rot);
+	}
+
+	public static double getRotation(Geometry geom, int state)
+	{
+		switch (state)
+		{
+			case 1:
+			{
+				return inDegrees ? Math.toDegrees(geom.getLocalRotation().getX()) : geom.getLocalRotation().getX();
+			}
+			case 2:
+			{
+				return inDegrees ? Math.toDegrees(geom.getLocalRotation().getY()) : geom.getLocalRotation().getY();
+			}
+			case 3:
+			{
+				return inDegrees ? Math.toDegrees(geom.getLocalRotation().getZ()) : geom.getLocalRotation().getZ();
+			}
+		}
+
+		return 0;
 	}
 
 	public static void generateCode(Node shootables)
@@ -155,9 +259,10 @@ public class Options extends JPanel
 		FileHelper.writeToFile(path, "}");
 	}
 
-	public static void open()
+	public static void saveOptions()
 	{
-		thisFrame.setVisible(true);
+		save.setBoolean("In Degrees", inDegrees);
+		save.setFloat("Save Interval", saveMins);
 	}
 
 	private static final long serialVersionUID = 1L;

@@ -3,6 +3,10 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -11,6 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import main.utils.DataTag;
+import main.utils.NumKL;
+import main.utils.Part;
 import com.jme3.scene.Geometry;
 
 public class AddBoxPanel extends JPanel implements ActionListener
@@ -64,15 +71,15 @@ public class AddBoxPanel extends JPanel implements ActionListener
 
 		rotX = new JTextField("1.0");
 		rotX.addKeyListener(new NumKL(rotX));
-		rotX.setBorder(BorderFactory.createTitledBorder("X Rotation"));
+		rotX.setBorder(BorderFactory.createTitledBorder("X " + (Options.inDegrees ? "Deg" : "Rad") + " Rotation"));
 
 		rotY = new JTextField("1.0");
 		rotY.addKeyListener(new NumKL(rotY));
-		rotY.setBorder(BorderFactory.createTitledBorder("Y Rotation"));
+		rotY.setBorder(BorderFactory.createTitledBorder("Y " + (Options.inDegrees ? "Deg" : "Rad") + " Rotation"));
 
 		rotZ = new JTextField("1.0");
 		rotZ.addKeyListener(new NumKL(rotZ));
-		rotZ.setBorder(BorderFactory.createTitledBorder("Z Rotation"));
+		rotZ.setBorder(BorderFactory.createTitledBorder("Z " + (Options.inDegrees ? "Deg" : "Rad") + " Rotation"));
 
 		texOffsetX = new JTextField("0");
 		texOffsetX.addKeyListener(new NumKL(texOffsetX));
@@ -91,7 +98,7 @@ public class AddBoxPanel extends JPanel implements ActionListener
 	{
 		instance = new AddBoxPanel();
 
-		thisFrame = new JFrame("Modeling");
+		thisFrame = new JFrame("Model" + Options.fileName);
 		thisFrame.add(instance);
 		thisFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		thisFrame.setSize(600, 400);
@@ -195,6 +202,30 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			public void actionPerformed(ActionEvent e)
 			{
 				Jme.instance.generateCode();
+				Jme.instance.save();
+			}
+		});
+
+		JButton createMap = new JButton("Create Image");
+		createMap.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					BufferedImage image = new BufferedImage(512, 256, BufferedImage.TYPE_INT_BGR);
+					TexturePanel.instance.paintAll(image.createGraphics());
+
+					if (ImageIO.write(image, "png", new File(DataTag.USER_FOLDER + "/Models/texture.png")))
+					{
+						System.out.println("Successfully saved the Image!");
+					}
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -204,12 +235,15 @@ public class AddBoxPanel extends JPanel implements ActionListener
 		mid.add(boxPanel, BorderLayout.SOUTH);
 
 		add(mid, BorderLayout.NORTH);
+		add(createMap, BorderLayout.CENTER);
 		add(generateCode, BorderLayout.SOUTH);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
+		if (Options.file != null) thisFrame.setTitle(Options.file.getName());
+
 		if (Jme.instance == null) return;
 
 		Geometry geom = Jme.instance.selectedGeometry;
@@ -245,11 +279,11 @@ public class AddBoxPanel extends JPanel implements ActionListener
 			texOffsetY.setText("" + Part.getPartFor(geom).getYOffset());
 
 			mirrorButton.setSelected(Part.getPartFor(geom).isMirror());
-			mirror = AddBoxPanel.this.mirrorButton.isSelected();
+			mirror = mirrorButton.isSelected();
 
-			rotX.setText("" + geom.getLocalRotation().getX());
-			rotY.setText("" + geom.getLocalRotation().getY());
-			rotZ.setText("" + geom.getLocalRotation().getZ());
+			rotX.setText("" + (int) Options.getRotation(geom, 1));
+			rotY.setText("" + (int) Options.getRotation(geom, 2));
+			rotZ.setText("" + (int) Options.getRotation(geom, 3));
 
 			boxName.setText(geom.getName());
 		}

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -15,12 +16,14 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 
 public class SelectedBoxesPanel extends JPanel implements ActionListener
 {
 	private final Timer timer;
 	public ListSelectionModel listSelectionModel;
-	public JList<Part> list;
+	public JList<String> list;
+	ArrayList<String> strings = new ArrayList<String>();
 	public static JFrame thisFrame;
 	private static final long serialVersionUID = 1L;
 
@@ -48,7 +51,7 @@ public class SelectedBoxesPanel extends JPanel implements ActionListener
 		timer = new Timer(400, this);
 		timer.start();
 
-		list = new JList<Part>(Part.getAllParts().toArray(new Part[0]));
+		list = new JList<String>(new String[0]);
 		listSelectionModel = list.getSelectionModel();
 		listSelectionModel.addListSelectionListener(new SharedListSelectionHandler());
 		JScrollPane listPane = new JScrollPane(list);
@@ -74,10 +77,14 @@ public class SelectedBoxesPanel extends JPanel implements ActionListener
 			{
 				if (lsm.isSelectedIndex(i))
 				{
-					Part selectedPart = Part.getAllParts().get(i);
-
-					Jme.instance.selectedGeometry = null;
-					Jme.instance.select((Geometry) selectedPart.getSpatial());
+					for (int j = 0; j < Jme.instance.shootables.getQuantity(); j++)
+					{
+						if (strings.get(j).equals(Jme.instance.shootables.getChild(j).getName()))
+						{
+							Jme.instance.unSelect(Jme.instance.selectedGeometry);
+							Jme.instance.select((Geometry) Jme.instance.shootables.getChildren().toArray(new Spatial[0])[i]);
+						}
+					}
 				}
 			}
 		}
@@ -86,6 +93,14 @@ public class SelectedBoxesPanel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		list.setListData(Part.getAllParts().toArray(new Part[0]));
+		if (Jme.instance == null || Jme.instance.shootables == null) return;
+		strings.clear();
+
+		for (int i = 0; i < Jme.instance.shootables.getQuantity(); i++)
+		{
+			strings.add(Jme.instance.shootables.getChild(i).getName());
+		}
+
+		list.setListData(strings.toArray(new String[0]));
 	}
 }

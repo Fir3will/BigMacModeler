@@ -1,0 +1,187 @@
+[center]
+[size=xx-large][color=rgb(255, 0, 0)]Big Mac Modeler[/color][/size]
+
+[b]Are you a Mac, or Linux, Modder but can't create Models because Techne is only Windows and MCModeler is outdated/not updating?[/b]
+Well I'm here to answer all your prayers with my newest Program! It's a Modeler that actually WORKS on Mac and Linux!
+
+[size=x-large]Screenshots[/size]
+[spoiler]
+[size=large]The Loading Screen and my Loyal Mobs:[/size]
+[IMG]http://i.imgur.com/s1OYLDP.png[/IMG]
+
+[size=large]After the loading Finishes, you'll be faced with this Menu:[/size]
+[IMG]http://i.imgur.com/wlW7JmC.png[/IMG]
+
+[size=large]Before you start Modeling, you have to name your Model![/size]
+[IMG]http://i.imgur.com/jjJHisg.png[/IMG]
+
+[size=large]After inserting a Name for your Model, You could start Building!:[/size]
+[IMG]http://i.imgur.com/mMApxB7.png[/IMG]
+
+[size=large]After Adding a new Box, this is what you will see:[/size]
+[IMG]http://i.imgur.com/g1MlSsN.png[/IMG]
+
+[size=large]Created this in a matter of minutes! Really! Less than two Minutes![/size]
+[IMG]http://i.imgur.com/yVffnTC.png[/IMG]
+
+[size=large]This is the Java Code of the Model I made, Free to anyone who wants it:[/size] [url=http://pastebin.com/Si5uUDR0]Click Here![/url] 
+(I know I called it dog... SHHH!)
+
+[/spoiler]
+
+[size=x-large]Instructions[/size]
+[spoiler]
+[size=large]Box Handling[/size]
+[spoiler]
+[size=medium][u]Adding a Box[/u][/size]
+To create a new box, In the editor, click the Add Box button in the side panel.
+What this will do is create a new box in the model.
+The Coordinates will be 0 for the X, Y, and Z Positions!
+The Rotation will also be 0.0 for all three sides!
+The Size will actually be 1 length, 1 width, and 1 height.
+All of there variables are customizable in the Model panel!
+
+[size=medium][u]Selecting a Box[/u][/size]
+There are two ways to select a box. 
+The first way is to select it from the Boxes panel.
+The Second way to select it is to aim the small '+' in the middle of the screen right at it!
+
+[size=medium][u]Removing a Box[/u][/size]
+To Remove a box, select it and click the Remove Box Button in the Model Panel.
+This will remove it from the Model and will stop rendering it.
+NOTE: If you remove a box from the model, it will still appear up in the Boxes panel, BUT will be invisible and won't get Generated in the model!
+I will be fixing that in future updates, or maybe even in the next one!
+
+[size=medium][u]Cloning a Box[/u][/size]
+To Clone a box, select it and click the Clone Box button in the Model Panel.
+This will clone the rotation, the size, and the location.
+But! Know that Cloning a box will not clone the name exactly! It will add a number to the end of the name.
+If there already is a box with that name, it will increase the number to add to the end!
+
+[size=medium][u]Rotating a Box[/u][/size]
+To Rotate a box, select it and modify the Rotations in the Model Panel.
+Know that the rotation is done in radian and not in degrees!
+What this means is that 2 PI is a full rotation! So if you put 6.28318530717959 (2 PI)...
+The Model will be rotated a full rotation so it will look the same!
+If you want it in degrees, multiply the degrees you want it to be by PI/180.
+If you Know/Taken Trigonometry, You'll understand why that is what it is!
+
+[size=medium][u]Scaling a Box[/u][/size]
+To Scale a box, select it and modify the Sizes in the Model Panel.
+This will not scale in on one side, but actually on both sides.
+It's not like Techne, where if you increase the size, it will not increase on both sides, but only on the Y+ side.
+Here, if you increase it, it will increase on both sides of the box.
+
+[size=medium][u]Moving a Box[/u][/size]
+To Translate (Move) a box, select it and modify the Positions in the Model Panel.
+That will set it to that spot, respectively.
+This is pretty simple, and doesn't really need to be explained but, Oh well...
+Increasing the Y Position will place it higher in the model
+Decreasing the Y Position will place it lower in the model
+Changing the X or Z Position will place it on the same plane but in front or before in the model.
+NOTE: When changing the Y position, sometimes, it might seem a bit higher than it really is.
+That's because of the way I set the Y position in the Java Code
+[/spoiler]
+
+[size=large]Saving and Code Generation[/size]
+[spoiler]
+[size=medium][u]Code Generation[/u][/size]
+Before generating the code, make sure none of your boxes have the same name!
+If it does, when you generate it, the java file will have an error!
+
+Once you're done with your model and you want to export it as Java Code.
+Click the Generate Code button at the bottom of the Model panel.
+After Clicking that button, it will name the java file the name you gave it when you clicked, New Model!
+ * So... make sure the name is a valid Java Identifier! 
+ * What this means is, if the name has something that is not allowed in a variable name in java, you'll get an error for that!
+It will generate a .java file, with the name you gave it, in the folder Models next to the jar.
+There will be only one error, if you did everything right. The error will most likely be for the Package name!
+That's the only error you'll get in the code.
+Other then that, all the imports are good, and all the code in general is, hopefully, error free!
+ * If you do happen to get another error, don't hesitate to let me know!
+Generating Code does save the Model to the 
+ 
+Plug that into your Minecraft project/workspace, and it should work just like you wanted!
+
+NOTE: The Code isn't just like you actually set it in the modeler!
+The value you put in the modeler will, almost, always be different that the actual java file!
+[/spoiler]
+
+[size=large]Ingame FAQ[/size]
+[spoiler]
+Q: Is there a quick model scale option?
+A: Sadly, no, I could implement that in future versions, because that might be a bit difficult. I suggest just manually doing everything so you're secure!
+
+Q: The Model is a lot smaller then I wanted! How could I fix that?
+A: Manually scale everything! Next time, try to use the Planks underneath the floor as a guide for your Model!
+
+Q: Where's the Texture Map?
+A: There isn't one and will be in future updates.
+
+Q: (Your Question Here)
+A: (Your Answer Here)
+
+[b][i]Feel Free to ask a question below in the comments or send me a private message with your question, and I'll add it here![/i][/b]
+[/spoiler]
+
+[size=large]Got an Error?[/size]
+[spoiler]
+[i]That Sucks! I was hoping that woudn't happen...[/i]
+
+If you do get an error, or the program freezes or just shuts down unexpectedly, Follow these steps:
+NOTE: Before continuing, make sure the program actually shut down, if not, close it beforehand!
+Next to the jar, there should be a folder called Logs!
+In that folder, there should be a file called 'latest log.txt'.
+Copy everything in that and send that to me with a quick before and after of what happened.
+A quick summary of what you were doing before the error and what you did after the error.
+It would help me a lot if you could also give me any boxes you added or anything else!
+[/spoiler]
+[/spoiler]
+
+[size=x-large]Future Features[/size]
+[spoiler]
+[size=medium][u]To Add[/u][/size]
+- Add a Texture Map
+- Add a general scale to the model!
+[s]- Add a way to Save and Load Models OR a way to read Java Files and load a Model like that![/s]
+- Add more Options to the Options!
+[s]- Make the whole scene bigger. So far it's 3x3x3! The Max size for the camera and model...[/s]
+
+[size=medium][u]To Remove[/u][/size]
+- Any Bugs and Glitches that might frustrate the User!
+[/spoiler]
+[/center]
+[size=x-large]Changelog[/size]
+[spoiler]
+[size=large][u]Pre-Releases (Beta)[/u][/size]
+~~0.4b~~ [url=]Click Here![/url]
+[spoiler=0.4b]
+-Fixed removing a box, so it actually removes it from the Boxes panel too!
+-Fixed selecting from the Boxes Panel!
+-Made the Rotation in Degrees, instead of Radians! Also made it so this is customizable!
+-On creation of a Model, it, by default, creates a simple box in the middle of the Model.
+-The Latest Log is created when the program is closed, not during.
+-Added a save system and also made a section about that in the Instructions!
+-Fixed the loading screen so that it displays the correct BMM version
+[/spoiler]
+
+~~0.3b~~ [url=http://www.mediafire.com/download/5dzng11homs4xzj/something.zip]Click Here![/url]
+[spoiler=0.3b]
+-Newest Beta Release!
+-Mostly for bug fixes and just to see how everyone likes it!
+[/spoiler]
+[/spoiler]
+[center]
+
+Want to Support? Add this into your Signature:
+[CODE]
+[url=http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2190203-0-3b-big-mac-modeler-new-modeler-for-mac-and][img]http://signaturecraft.us/signatures/eJxzykxX8E1MVvDNT0nNSS3icsvMS8zJqVRIBIsm5qUo-GTmlVbA5BW5uHwz81KTixLTSriCS_OKMotTuYxMTbkMQBAA5ZEYNw~~.png[/img][/url]
+[/CODE]
+[url=http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2190203-0-3b-big-mac-modeler-new-modeler-for-mac-and][img]http://signaturecraft.us/signatures/eJxzykxX8E1MVvDNT0nNSS3icsvMS8zJqVRIBIsm5qUo-GTmlVbA5BW5uHwz81KTixLTSriCS_OKMotTuYxMTbkMQBAA5ZEYNw~~.png[/img][/url]
+
+Or This:
+[CODE]
+[url=http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2190203-0-3b-big-mac-modeler-new-modeler-for-mac-and][img]http://signaturecraft.us/signatures/eJxzykxX8E1MVvDNT0nNSS3icsvMS8zJqVRIBIsm5qUo-GTmlVbA5BW5uPxzgGL5eSn5eVzB2ZUKnsU5IFW6Cs5FqakFib6JxSWJhgaGXEamplwGIAgAOvAeVQ~~.png[/img][/url]
+[/CODE]
+[url=http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2190203-0-3b-big-mac-modeler-new-modeler-for-mac-and][img]http://signaturecraft.us/signatures/eJxzykxX8E1MVvDNT0nNSS3icsvMS8zJqVRIBIsm5qUo-GTmlVbA5BW5uPxzgGL5eSn5eVzB2ZUKnsU5IFW6Cs5FqakFib6JxSWJhgaGXEamplwGIAgAOvAeVQ~~.png[/img][/url]
+[/center]
