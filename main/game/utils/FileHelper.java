@@ -1,4 +1,4 @@
-package main.utils;
+package main.game.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

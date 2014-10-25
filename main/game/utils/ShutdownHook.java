@@ -1,7 +1,9 @@
-package main.utils;
+package main.game.utils;
 
-import main.Jme;
-import main.Options;
+import main.Main;
+import main.game.Jme;
+import main.game.Options;
+import main.game.saving.DataTag;
 
 public class ShutdownHook extends Thread
 {
@@ -15,7 +17,9 @@ public class ShutdownHook extends Thread
 				Options.saveOptions();
 				if (Jme.instance.canSave)
 				{
-					Jme.instance.save();
+					DataTag tag = new DataTag();
+					Jme.instance.saveToTag(tag);
+					DataTag.saveTo(Main.getSaveFile(), tag);
 				}
 				System.out.println("Shutting Down!");
 				Log.printLog();

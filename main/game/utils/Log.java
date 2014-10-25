@@ -1,4 +1,4 @@
-package main.utils;
+package main.game.utils;
 
 import java.io.PrintStream;
 import java.nio.file.Files;

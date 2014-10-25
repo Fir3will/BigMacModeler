@@ -1,4 +1,4 @@
-package main.utils;
+package main.game.utils;
 
 import java.io.Serializable;
 import java.util.HashMap;
